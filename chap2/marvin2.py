@@ -5,6 +5,7 @@ for char in letters[:6]:
     print(f"\t{char}")
 print()
 
+# f-string内でバックスラッシュが使えないので、文字列連結を使っている
 for char in letters[-7:]:
     print("\t"*2, char)
 print()
