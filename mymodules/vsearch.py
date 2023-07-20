@@ -5,7 +5,8 @@ def search4vowels(word: str) -> set:
     vowels = set("aeiou")
     return vowels.intersection(set(word))
 
-def search4letters(phrase: str, letters: str="aeiou") -> set:
+
+def search4letters(phrase: str, letters: str = "aeiou") -> set:
     """
     指定された英単語に含まれる母音を返す。
     """
