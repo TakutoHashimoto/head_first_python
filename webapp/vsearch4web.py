@@ -1,14 +1,10 @@
-from flask import Flask, render_template, request, redirect
+from flask import Flask, render_template, request
 from vsearch import search4letters
 
 app = Flask(__name__)
 
 
 @app.route("/")
-def hello() -> "302":
-    return redirect("/entry")
-
-
 @app.route("/entry")
 def entry_page() -> str:
     return render_template(
