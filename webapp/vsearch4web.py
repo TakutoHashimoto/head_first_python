@@ -10,7 +10,7 @@ def log_request(req: str, res: str) -> None:
     リクエストとレスポンスをログファイルに記録する
     """
     with open("log/vsearch.log", "a") as log:
-        print(str(dir(req)), res, file=log)
+        print(req.form, req.remote_addr, req.user_agent, res, file=log, sep=" | ")
 
 
 @app.route("/")
