@@ -56,7 +56,14 @@ def view_log() -> str:
             for item in line.split("|"):
                 contents[-1].append(escape(item))
 
-    return str(contents)
+    titles = ("フォームデータ", "リモートアドレス", "ユーザーエージェント", "結果")
+
+    return render_template(
+        "viewlog.html",
+        the_title="ログの閲覧",
+        the_row_titles=titles,
+        the_data=contents
+    )
 
 
 if __name__ == "__main__":
