@@ -2,6 +2,7 @@ from flask import Flask, render_template, request
 from vsearch import search4letters
 from markupsafe import escape
 
+
 app = Flask(__name__)
 
 
@@ -10,7 +11,13 @@ def log_request(req: str, res: str) -> None:
     リクエストとレスポンスをログファイルに記録する
     """
     with open("log/vsearch.log", "a") as log:
-        print(req.form, req.remote_addr, req.user_agent, res, file=log, sep=" | ")
+        print(
+            req.form,
+            req.remote_addr,
+            req.user_agent,
+            res,
+            file=log,
+            sep=" | ")
 
 
 @app.route("/")
@@ -42,10 +49,14 @@ def do_search() -> str:
 
 @app.route("/viewlog")
 def view_log() -> str:
+    contents = []
     with open("log/vsearch.log") as log:
-        contents = log.read()
+        for line in log:
+            contents.append([])
+            for item in line.split("|"):
+                contents[-1].append(escape(item))
 
-    return escape(contents)
+    return str(contents)
 
 
 if __name__ == "__main__":
