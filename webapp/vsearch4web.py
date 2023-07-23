@@ -10,14 +10,39 @@ def log_request(req: str, res: str) -> None:
     """
     リクエストとレスポンスをログファイルに記録する
     """
-    with open("log/vsearch.log", "a") as log:
-        print(
-            req.form,
-            req.remote_addr,
+    dbconfig = {
+        "host": "127.0.0.1",
+        "user": "vsearch",
+        "password": "vsearchpasswd",
+        "database": "vsearchlogDB"
+    }
+
+    import mysql.connector
+
+    conn = mysql.connector.connect(**dbconfig)
+    cursor = conn.cursor()
+
+    _SQL = """
+INSERT INTO log
+(phrase, letters, ip, browser_string, results)
+VALUES
+(%s, %s, %s, %s, %s)
+"""
+
+    cursor.execute(
+        _SQL,
+        (
+            req.form["phrase"],
+            req.form["letters"],
+            req.remote_addr.
             req.user_agent,
-            res,
-            file=log,
-            sep=" | ")
+            res
+        )
+        )
+
+    conn.commit()
+    conn.close()
+    cursor.close()
 
 
 @app.route("/")
