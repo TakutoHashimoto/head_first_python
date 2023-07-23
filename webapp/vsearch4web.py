@@ -33,7 +33,7 @@ VALUES
         _SQL, (req.form["phrase"],
                req.form["letters"],
                req.remote_addr,
-               req.user_agent,
+               req.user_agent.browser or "",
                res)
         )
 
