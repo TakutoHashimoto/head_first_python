@@ -8,7 +8,7 @@ app = Flask(__name__)
 
 def log_request(req: str, res: str) -> None:
     """
-    リクエストとレスポンスをログファイルに記録する
+    webリクエストの詳細と結果をロギングする
     """
     dbconfig = {
         "host": "127.0.0.1",
@@ -30,14 +30,11 @@ VALUES
 """
 
     cursor.execute(
-        _SQL,
-        (
-            req.form["phrase"],
-            req.form["letters"],
-            req.remote_addr.
-            req.user_agent,
-            res
-        )
+        _SQL, (req.form["phrase"],
+               req.form["letters"],
+               req.remote_addr,
+               req.user_agent,
+               res)
         )
 
     conn.commit()
