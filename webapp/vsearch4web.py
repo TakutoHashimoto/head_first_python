@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request
 from vsearch import search4letters
 from markupsafe import escape
-import mysql.connector
+from database_connector import UseDatabase
 
 
 app = Flask(__name__)
@@ -34,13 +34,6 @@ def log_request(req: str, res: str) -> None:
                 req.user_agent.browser or "",
                 res)
         )
-
-    conn = mysql.connector.connect(**dbconfig)
-    cursor = conn.cursor()
-
-    conn.commit()
-    conn.close()
-    cursor.close()
 
 
 @app.route("/")
