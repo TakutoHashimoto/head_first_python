@@ -1,41 +1,42 @@
 from flask import Flask, render_template, request
 from vsearch import search4letters
 from markupsafe import escape
+import mysql.connector
 
 
 app = Flask(__name__)
 
-
-def log_request(req: str, res: str) -> None:
-    """
-    webリクエストの詳細と結果をロギングする
-    """
-    dbconfig = {
+dbconfig = {
         "host": "127.0.0.1",
         "user": "vsearch",
         "password": "vsearchpasswd",
         "database": "vsearchlogDB"
     }
 
-    import mysql.connector
+
+def log_request(req: str, res: str) -> None:
+    """
+    webリクエストの詳細と結果をロギングする
+    """
+
+    with UseDatabase(dbconfig) as cursor:
+        _SQL = """
+                INSERT INTO log
+                (phrase, letters, ip, browser_string, results)
+                VALUES
+                (%s, %s, %s, %s, %s)
+                """
+
+        cursor.execute(
+        _SQL, (req.form["phrase"],
+                req.form["letters"],
+                req.remote_addr,
+                req.user_agent.browser or "",
+                res)
+        )
 
     conn = mysql.connector.connect(**dbconfig)
     cursor = conn.cursor()
-
-    _SQL = """
-INSERT INTO log
-(phrase, letters, ip, browser_string, results)
-VALUES
-(%s, %s, %s, %s, %s)
-"""
-
-    cursor.execute(
-        _SQL, (req.form["phrase"],
-               req.form["letters"],
-               req.remote_addr,
-               req.user_agent.browser or "",
-               res)
-        )
 
     conn.commit()
     conn.close()
