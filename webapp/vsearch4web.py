@@ -6,7 +6,7 @@ from database_connector import UseDatabase
 
 app = Flask(__name__)
 
-dbconfig = {
+app.config["dbconfig"] = {
         "host": "127.0.0.1",
         "user": "vsearch",
         "password": "vsearchpasswd",
@@ -14,12 +14,12 @@ dbconfig = {
     }
 
 
-def log_request(req: str, res: str) -> None:
+def log_request(req: 'flask_request', res: str) -> None:
     """
-    webリクエストの詳細と結果をロギングする
+    Webリクエストの詳細と結果をロギングする
     """
 
-    with UseDatabase(dbconfig) as cursor:
+    with UseDatabase(app.config["dbconfig"]) as cursor:
         _SQL = """
                 INSERT INTO log
                 (phrase, letters, ip, browser_string, results)
@@ -65,14 +65,26 @@ def do_search() -> str:
 
 @app.route("/viewlog")
 def view_log() -> str:
-    contents = []
-    with open("log/vsearch.log") as log:
-        for line in log:
-            contents.append([])
-            for item in line.split("|"):
-                contents[-1].append(escape(item))
+    """
+    ログファイルの内容をHTMLテーブルとして表示する。
+    """
 
-    titles = ("フォームデータ", "リモートアドレス", "ユーザーエージェント", "結果")
+    with UseDatabase(app.config["dbconfig"]) as cursor:
+        _SQL =  """
+                SELECT 
+                    phrase,
+                    letters,
+                    ip,
+                    browser_string,
+                    results
+                FROM
+                    log
+                """
+
+        cursor.execute(_SQL)
+        contents = cursor.fetchall()
+
+    titles = ("フレーズ", "検索文字", "リモートアドレス", "ユーザーエージェント", "結果")
 
     return render_template(
         "viewlog.html",
