@@ -8,6 +8,12 @@ def hello() -> str:
     return "シンプルなWebアプリケーションからこんにちは。"
 
 
+def check_logged_in() -> bool:
+    if "logged_in" in session:
+        return True
+    return False
+
+
 @app.route("/login")
 def do_login() -> str:
     session["logged_in"] = True
