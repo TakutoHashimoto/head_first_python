@@ -11,3 +11,14 @@ def myfunc2(**kwargs):
 
     if kwargs:
         print()
+
+
+def myfunc3(*args, **kwargs):
+    if args:
+        print(*args, end=" ")
+        print
+
+    if kwargs:
+        for k, v in kwargs.items():
+            print(k, v, sep="->", end=" ")
+        print()
