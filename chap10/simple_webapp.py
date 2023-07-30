@@ -1,4 +1,6 @@
 from flask import Flask, session
+from checker import check_logged_in
+
 
 app = Flask(__name__)
 
@@ -6,12 +8,6 @@ app = Flask(__name__)
 @app.route("/")
 def hello() -> str:
     return "シンプルなWebアプリケーションからこんにちは。"
-
-
-def check_logged_in() -> bool:
-    if "logged_in" in session:
-        return True
-    return False
 
 
 @app.route("/login")
@@ -22,16 +18,19 @@ def do_login() -> str:
 
 
 @app.route("/page1")
+@check_logged_in
 def page1() -> str:
     return "これはページ1です。"
 
 
 @app.route("/page2")
+@check_logged_in
 def page2() -> str:
     return "これはページ2です。"
 
 
 @app.route("/page3")
+@check_logged_in
 def page3() -> str:
     return "これはページ3です。"
 
@@ -51,5 +50,7 @@ def check_status() -> str:
 
 
 app.secret_key = "**********"
+
+
 if __name__ == "__main__":
     app.run(debug=True)
