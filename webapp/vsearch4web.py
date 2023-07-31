@@ -1,7 +1,8 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, escape, session
 from vsearch import search4letters
 from markupsafe import escape
 from database_connector import UseDatabase
+from checker import check_logged_in
 
 
 app = Flask(__name__)
@@ -12,6 +13,19 @@ app.config["dbconfig"] = {
         "password": "vsearchpasswd",
         "database": "vsearchlogDB"
     }
+
+@app.route("/login")
+def do_login() -> str:
+    session["logged_in"] = True
+
+    return "現在ログインしています。"
+
+
+@app.route("/logout")
+def do_logout() -> str:
+    session.pop("logged_in")
+
+    return "現在ログアウトしています。"
 
 
 def log_request(req: 'flask_request', res: str) -> None:
@@ -36,15 +50,6 @@ def log_request(req: 'flask_request', res: str) -> None:
         )
 
 
-@app.route("/")
-@app.route("/entry")
-def entry_page() -> str:
-    return render_template(
-        "entry.html",
-        the_title="Web版のsearch4lettersにようこそ!"
-    )
-
-
 @app.route("/search4", methods=["POST"])
 def do_search() -> str:
     phrase = request.form["phrase"]
@@ -63,7 +68,17 @@ def do_search() -> str:
     )
 
 
+@app.route("/")
+@app.route("/entry")
+def entry_page() -> "html":
+    return render_template(
+        "entry.html",
+        the_title="Web版のsearch4lettersにようこそ!"
+    )
+
+
 @app.route("/viewlog")
+@check_logged_in
 def view_log() -> str:
     """
     ログファイルの内容をHTMLテーブルとして表示する。
@@ -92,6 +107,9 @@ def view_log() -> str:
         the_row_titles=titles,
         the_data=contents
     )
+
+
+app.secret_key = "**********"
 
 
 if __name__ == "__main__":
