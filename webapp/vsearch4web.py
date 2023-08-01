@@ -57,7 +57,10 @@ def do_search() -> str:
     title = "検索結果"
     results = str(search4letters(phrase, letters))
 
-    log_request(request, results)
+    try:
+        log_request(request, results)
+    except Exception as err:
+        print(f"***** ロギングが失敗しました。{err}")
 
     return render_template(
         "results.html",
